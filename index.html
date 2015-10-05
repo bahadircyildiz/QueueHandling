@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script type="text/javascript" src="scripts/jquery.min.js"></script>
+	<script type="text/javascript" src="scripts/angular.min.js"></script>
+	<script type="text/javascript" src="scripts/sift.min.js"></script>
+	<script type="text/javascript" src="scripts/bootstrap.js"></script>
+	<link rel="stylesheet" href="styles/bootstrap.css" />
+	<title>Advanced Network Queue Handling Assignment</title>
+</head>
+<body ng-app="queueHandler" ng-controller="global">
+	<nav class="navbar navbar-default">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<p class="navbar-text "> Advanced Network Queue Handling Assignment </p>
+			</div>
+		</div>
+	</nav>
+	<div class="container">
+		<div class="row">
+			<div class="col-xs-4">
+				<div class="panel-group">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h4 class="panel-title"> Upcoming Processes </h4>
+						</div>
+						<div class="panel-collapse collapse am-collase in">
+							<div class="panel-body">
+								<table class="table">
+									<thead>
+										<tr>
+											<th>Process</th>
+											<th>Inter Arrival Time</th>
+											<th>Server Time</th>
+										</tr>					
+									</thead>
+									<tbody>
+										<tr ng-repeat="process in processes">
+											<th class="row"> {{$index+1}}</th>
+											<td> <input type="number" class="form-control" min="1" ng-model="process.interArrivalTime"/></td>
+											<td> <input type="number" class="form-control" min="1" ng-model="process.serverTime"/></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-xs-3">
+				<div class="panel-group">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h4 class="panel-title"> Actions </h4>
+						</div>
+						<div class="panel-collapse collapse am-collase in">
+							<div class="panel-body">
+								<form class="form-horizontal">
+									<div class="form-group"><button class="btn btn-default center-block" ng-click="processes.addProcess()"> Add Process </button></div>
+									<div class="form-group"><button class="btn btn-default center-block" ng-click="start()"> Start </button></div>
+									<div class="form-group"><button class="btn btn-default center-block" ng-click="toggleDebug()"> Debug Mode: {{debugMode ? "On" : "Off"}} </button></div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-xs-5">
+				<div class="panel-group">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h4 class="panel-title"> Result Log </h4>
+						</div>
+						<div class="panel-collapse collapse am-collase in">
+							<div class="panel-body">
+								<table class="table" ng-show="logs">
+									<thead>
+										<tr>
+											<th>System Clock</th>
+											<th>Arrival Time</th>
+											<th>Depart Time</th>
+											<th># in queue</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="log in logs">
+											<td>{{log.systemClock}}</td>
+											<td>{{log.arrivalTime}}</td>
+											<td>{{log.departTime}}</td>
+											<td>{{log.inQueue}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div ng-show="debugMode">{{processes | json}}</div>
+	<br />
+	<br />
+	<div ng-show="debugMode">{{timeLine | json}}</div>
+</body>
+	<script type="text/javascript" src="scripts/controller.js"></script>
+	<script type="text/javascript" src="scripts/core.js"></script>
+</html>
