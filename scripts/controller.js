@@ -42,7 +42,9 @@ function Controller($scope){
 			while(systemClock != queueDepartTime){
 				if(index == timeLine.length-1){
 					if(queue.length != 0){
-						log = { systemClock: systemClock, arrivalTime: queue[0].interArrivalTime, departTime : queue[0].serverTime , inQueue: queue.length };
+						var lastArrivalTime;
+						queue[1] ? lastArrivalTime = queue[1].interArrivalTime : lastArrivalTime = 0;
+						log = { systemClock: systemClock, arrivalTime: lastArrivalTime, departTime : queue[0].serverTime , inQueue: queue.length };
 						logs.push(log);
 						systemClock = Math.max(queue[0].interArrivalTime, systemClock);
 						queueDepartTime = systemClock + queue[0].serverTime - queue[0].interArrivalTime; 
