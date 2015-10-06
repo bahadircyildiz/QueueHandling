@@ -1,10 +1,17 @@
 function Controller($scope){
-	$scope.processes = [{ interArrivalTime: 0, serverTime: 0 }];
+	$scope.processes = [{ interArrivalTime: 1, serverTime: 1	}];
 	
 	$scope.debugMode = false;
 	
 	$scope.toggleDebug = function(){
 		$scope.debugMode = !$scope.debugMode;
+	}
+	
+	$scope.unitTest = function(){
+		var lecturerSample = [{ interArrivalTime: 1, serverTime: 1}, { interArrivalTime: 3, serverTime: 1}, { interArrivalTime: 2, serverTime: 5},
+								{ interArrivalTime: 4, serverTime: 1},	{ interArrivalTime: 1, serverTime: 1},	{ interArrivalTime: 7, serverTime: 2}];
+		$scope.processes = lecturerSample;
+		$scope.start();
 	}
 	
 	$scope.start = function(){
@@ -40,25 +47,35 @@ function Controller($scope){
 			queueDepartTime = process.serverTime;
 			
 			while(systemClock != queueDepartTime){
-				if(index == timeLine.length-1){
-					if(queue.length != 0){
+				if(index == timeLine.length-1){ // After all elements were arrived, 
+					if(queue.length != 0){ // Process moves on queue
 						var lastArrivalTime;
-						queue[1] ? lastArrivalTime = queue[1].interArrivalTime : lastArrivalTime = 0;
+						queue[1] ? lastArrivalTime = Math.max(systemClock, queue[1].interArrivalTime) : lastArrivalTime = 0;
 						log = { systemClock: systemClock, arrivalTime: lastArrivalTime, departTime : queue[0].serverTime , inQueue: queue.length };
 						logs.push(log);
-						systemClock = Math.max(queue[0].interArrivalTime, systemClock);
-						queueDepartTime = systemClock + queue[0].serverTime - queue[0].interArrivalTime; 
-						queue.splice(0,1);
-						if(queue.length == 0){
-							systemClock = queueDepartTime;
-							log = { systemClock: queueDepartTime , arrivalTime: 0, departTime : 0 , inQueue: queue.length };
+						if (lastArrivalTime < queue[0].serverTime && lastArrivalTime != 0){
+							if(systemClock  == lastArrivalTime){
+								systemClock = queue[0].serverTime;
+								log = { systemClock: systemClock, arrivalTime: 0, departTime : queue[0].serverTime , inQueue: queue.length };
+								logs.push(log);
+							}
+							else systemClock = lastArrivalTime;
+						} 
+						else{
+							systemClock = queue[0].serverTime;
+							queue[1] ? queueDepartTime = queue[1].serverTime : queueDepartTime = 0;
+							queue.splice(0,1);							
+						}
+						if(queue.length == 0){ 
+							log = { systemClock: systemClock , arrivalTime: 0, departTime : 0 , inQueue: queue.length };
 							logs.push(log);	
+							break;
 						}
 					}
 				}	
 				else{
 					if(queue[0].serverTime <= timeLine[index+1].interArrivalTime){ // Depart Part
-						departTime= timeLine[index].serverTime;
+						departTime= queue[0].serverTime;
 						log = { systemClock: systemClock, arrivalTime: timeLine[index+1].interArrivalTime, departTime :departTime , inQueue: queue.length };
 						logs.push(log);
 						systemClock = queue[0].serverTime;
