@@ -94,9 +94,9 @@
 									<tbody>
 										<tr ng-repeat="log in logs">
 											<td>{{log.systemClock}}</td>
-											<td>{{log.arrivalTime}}</td>
-											<td>{{log.departTime1}}</td>
-											<td>{{log.departTime2}}</td>
+											<td>{{log.arrivalTime.toString() === "Infinity" ? "-" : log.arrivalTime}}</td>
+											<td>{{log.departTime1.toString() === "Infinity" ? "-" : log.departTime1}}</td>
+											<td>{{log.departTime2.toString() === "Infinity" ? "-" : log.departTime2}}</td>
 											<td>{{log.queue1}}</td>
 											<td>{{log.queue2}}</td>
 										</tr>
