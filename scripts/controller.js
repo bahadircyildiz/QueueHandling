@@ -1,98 +1,72 @@
 function Controller($scope){
-	$scope.processes = [{ interArrivalTime: 1, serverTime: 1	}];
+	$scope.processes = [{ interArrivalTime: 1, serverTime1: 1, serverTime2: 1}];
 	
 	$scope.debugMode = false;
+	
+	var queuecount = 2;
+	$scope.queuecount  = queuecount;
+	var queue = [];
+
+	for(var x = 0; x<queuecount;x++){
+		queue.push({departTime: 0, elements: []});
+	}
+	
+	$scope.queue = queue;
 	
 	$scope.toggleDebug = function(){
 		$scope.debugMode = !$scope.debugMode;
 	}
 	
 	$scope.unitTest = function(){
-		var lecturerSample = [{ interArrivalTime: 1, serverTime: 1}, { interArrivalTime: 3, serverTime: 1}, { interArrivalTime: 2, serverTime: 5},
-								{ interArrivalTime: 4, serverTime: 1},	{ interArrivalTime: 1, serverTime: 1},	{ interArrivalTime: 7, serverTime: 2}];
+		var lecturerSample = [{ interArrivalTime: 1, serverTime1: 1, serverTime2: 1}, { interArrivalTime: 3, serverTime1: 1, serverTime2: 1}, { interArrivalTime: 2, serverTime1: 5, serverTime2: 5},
+								{ interArrivalTime: 4, serverTime1: 1, serverTime2: 1},	{ interArrivalTime: 1, serverTime1: 1, serverTime2: 1},	{ interArrivalTime: 7, serverTime1: 2, serverTime2: 2}];
 		$scope.processes = lecturerSample;
 		$scope.start();
 	}
 	
+	
+	
 	$scope.start = function(){
-		
-		//Retrieving Main Timeline
-		var timeLine = [];
-		var mainClock = 0;
-		$scope.processes.forEach(function(process, index){
-			var timeLineEntity = {};
-			timeLineEntity.interArrivalTime = mainClock + process.interArrivalTime;
-			timeLineEntity.serverTime = timeLineEntity.interArrivalTime+process.serverTime;
-			timeLine.push(timeLineEntity);
-			mainClock = timeLineEntity.interArrivalTime;
-		});
-		$scope.timeLine = timeLine;
-		
-		//Main Process
-		var logs = [];
-		var systemClock = 0;
-		var queue = [];
-		var departTime = 0;
-		var serverBusy = false;
-		var log;
-		var nextArrivalTime = 0;
-		
- 		for(var index=0, process = timeLine[index]; index < timeLine.length ; index++, process = timeLine[index] ){			
-			log = { systemClock: systemClock, arrivalTime: process.interArrivalTime, departTime : departTime, inQueue: queue.length };
+		var processes = $scope.processes;
+		var systemClock = 0, arrivalTime = processes[0].interArrivalTime , departTime1 = Infinity, departTime2 = Infinity;
+		var queue1 = [], queue2 = []; 
+		var logs = [], log = {};
+		log = {systemClock: systemClock, arrivalTime: arrivalTime, depart1: departTime1, depart2: departTime2, queue1: queue1.length, queue2: queue2.length};
+		logs.push(log);
+		systemClock = processes[0].interArrivalTime;
+		var arrive = function(){
+			arrivalTime = systemClock + processes[0].interArrivalTime;
+			queue1.push(processes[0]);
+			processes.splice(0,1);
+			departTime1 = systemClock + queue1[0].serverTime1;
+			if(processes.length == 0) arrivalTime = Infinity; else arrivalTime = systemClock + processes[0].interArrivalTime;
+			log = {systemClock: systemClock, arrivalTime: arrivalTime, depart1: departTime1, depart2: departTime2, queue1: queue1.length, queue2: queue2.length};
 			logs.push(log);
-			departTime = process.serverTime;
-			systemClock = process.interArrivalTime;
-			queue.push(process);
-			
-			queueDepartTime = process.serverTime;
-			
-			while(systemClock != queueDepartTime){
-				if(index == timeLine.length-1){ // After all elements were arrived, 
-					if(queue.length != 0){ // Process moves on queue
-						var lastArrivalTime;
-						queue[1] ? lastArrivalTime = Math.max(systemClock, queue[1].interArrivalTime) : lastArrivalTime = 0;
-						log = { systemClock: systemClock, arrivalTime: lastArrivalTime, departTime : queue[0].serverTime , inQueue: queue.length };
-						logs.push(log);
-						if (lastArrivalTime < queue[0].serverTime && lastArrivalTime != 0){
-							if(systemClock  == lastArrivalTime){
-								systemClock = queue[0].serverTime;
-								log = { systemClock: systemClock, arrivalTime: 0, departTime : queue[0].serverTime , inQueue: queue.length };
-								logs.push(log);
-							}
-							else systemClock = lastArrivalTime;
-						} 
-						else{
-							systemClock = queue[0].serverTime;
-							queue[1] ? queueDepartTime = queue[1].serverTime : queueDepartTime = 0;
-							queue.splice(0,1);							
-						}
-						if(queue.length == 0){ 
-							log = { systemClock: systemClock , arrivalTime: 0, departTime : 0 , inQueue: queue.length };
-							logs.push(log);	
-							break;
-						}
-					}
-				}	
-				else{
-					if(queue[0].serverTime <= timeLine[index+1].interArrivalTime){ // Depart Part
-						departTime= queue[0].serverTime;
-						log = { systemClock: systemClock, arrivalTime: timeLine[index+1].interArrivalTime, departTime :departTime , inQueue: queue.length };
-						logs.push(log);
-						systemClock = queue[0].serverTime;
-						departTime = 0;
-						queue.splice(0,1);
-					}
-					if(queue.length !=0 ) if(queue[0].serverTime > timeLine[index+1].interArrivalTime){ // Arrival Part
-						log = { systemClock: systemClock, arrivalTime: timeLine[index+1].interArrivalTime, departTime : departTime, inQueue: queue.length };
-						logs.push(log);
-						queue.push(timeLine[index]);
-						systemClock = timeLine[index+1].interArrivalTime;
-						index++;
-					}
-				}
-			}
 		}
 		
-		$scope.logs = logs;			
+		var depart1 = function(){
+			queue2.push(queue1[0]);
+			queue1.splice(0,1);
+			queue1[0] ? departTime1 = serverTime1 + queue1[0].serverTime1 : departTime1 = Infinity;
+			departTime2 = systemClock + queue2[0].serverTime2;
+			log = {systemClock: systemClock, arrivalTime: arrivalTime, depart1: departTime1, depart2: departTime2, queue1: queue1.length, queue2: queue2.length};
+			logs.push(log);
+		}
+		var depart2 = function(){
+			queue2.splice(0,1);
+			queue2[0] ? departTime2 = systemClock + queue2[0].serverTime2 : departTime2 = Infinity;
+			log = {systemClock: systemClock, arrivalTime: arrivalTime, depart1: departTime1, depart2: departTime2, queue1: queue1.length, queue2: queue2.length};
+			logs.push(log);
+		}
+		
+		while (processes.length != 0 || queue1.length != 0 || queue2.length != 0){
+			systemClock = Math.min(arrivalTime, departTime1, departTime2);
+			if(systemClock == arrivalTime) arrive();
+			systemClock = Math.min(arrivalTime, departTime1, departTime2);
+			if(systemClock == departTime1) depart1();
+			systemClock = Math.min(arrivalTime, departTime1, departTime2);
+			if(systemClock == departTime2) depart2();
+		}
+				
 	}		
 }
