@@ -18,9 +18,11 @@ function Controller($scope){
 	}
 	
 	$scope.unitTest = function(){
-		var lecturerSample = [{ interArrivalTime: 1, serverTime1: 1, serverTime2: 1}, { interArrivalTime: 3, serverTime1: 1, serverTime2: 1}, { interArrivalTime: 2, serverTime1: 5, serverTime2: 5},
-								{ interArrivalTime: 4, serverTime1: 1, serverTime2: 1},	{ interArrivalTime: 1, serverTime1: 1, serverTime2: 1},	{ interArrivalTime: 7, serverTime1: 2, serverTime2: 2}];
-		$scope.processes = lecturerSample;
+		$scope.processes.forEach(function(process,index){
+			process.interArrivalTime = Math.floor((Math.random() * 10) + 1);;
+			process.serverTime1 = Math.floor((Math.random() * 10) + 1);;
+			process.serverTime2 = Math.floor((Math.random() * 10) + 1);;
+		});
 		$scope.start();
 	}
 	
@@ -31,6 +33,7 @@ function Controller($scope){
 		var systemClock = 0, arrivalTime = processes[0].interArrivalTime , departTime1 = Infinity, departTime2 = Infinity, d1iIsSet = false, d2IsSet = false;
 		var queue1 = [], queue2 = []; 
 		var logs = [], log = {};
+		var tempvar;
 		log = {systemClock: systemClock, arrivalTime: arrivalTime, departTime1: departTime1, departTime2: departTime2, queue1: queue1.length, queue2: queue2.length};
 		logs.push(log);
 		systemClock = processes[0].interArrivalTime;
@@ -79,5 +82,5 @@ function Controller($scope){
 			if(systemClock == departTime2) depart2();
 		}
 		$scope.logs = logs;		
-	}		
+	}
 }
