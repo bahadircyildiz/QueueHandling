@@ -41,11 +41,13 @@ function Controller($scope){
 			arrivalTime = systemClock + processes[0].interArrivalTime;
 			queue1.push(processes[0]);
 			processes.splice(0,1);
+			if(processes.length == 0) arrivalTime = Infinity; else arrivalTime = systemClock + processes[0].interArrivalTime;
 			if(!d1iIsSet) {
-				departTime1 = systemClock + queue1[0].serverTime1;
+				if (arrivalTime == Infinity) departTime1 = logs[logs.length-1].departTime1;
+				else departTime1 = systemClock + queue1[0].serverTime1;
+				if(departTime1 == Infinity) departTime1 = systemClock + queue1[0].serverTime1;
 				d1iIsSet = true;
 			}
-			if(processes.length == 0) arrivalTime = Infinity; else arrivalTime = systemClock + processes[0].interArrivalTime;
 			log = {systemClock: systemClock, arrivalTime: arrivalTime, departTime1: departTime1, departTime2: departTime2, queue1: queue1.length, queue2: queue2.length};
 			logs.push(log);
 		}
