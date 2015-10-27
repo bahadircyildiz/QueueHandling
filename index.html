@@ -21,30 +21,28 @@
 	</nav>
 	<div class="container-fluid">
 		<div class="row">
-			<div class="col-xs-4">
+			<div class="col-xs-3">
 				<div class="panel-group">
 					<div class="panel panel-default">
 						<div class="panel-heading">
-							<h4 class="panel-title"> Upcoming Processes </h4>
+							<h4 class="panel-title"> Process Options </h4>
 						</div>
 						<div class="panel-collapse collapse am-collase in">
 							<div class="panel-body">
 								<table class="table">
 									<thead>
 										<tr>
-											<th>Process</th>
-											<th>Inter Arrival Time</th>
-											<th>Server Time 1</th>
-											<th>Server Time 2</th>
+											<th>Lambda</th>
+											<th>u1</th>
+											<th>u2</th>
 											
 										</tr>					
 									</thead>
 									<tbody>
-										<tr ng-repeat="process in processes">
-											<th class="row"> {{$index+1}}</th>
-											<td> <input type="number" class="form-control" min="1" ng-model="process.interArrivalTime"/></td>
-											<td> <input type="number" class="form-control" min="1" ng-model="process.serverTime1"/></td>
-											<td> <input type="number" class="form-control" min="1" ng-model="process.serverTime2"/></td>
+										<tr>
+											<td> <input type="number" class="form-control" min="0" ng-model="lambda"/></td>
+											<td> <input type="number" class="form-control" min="0" ng-model="u1"/></td>
+											<td> <input type="number" class="form-control" min="0" ng-model="u2"/></td>
 										</tr>
 									</tbody>
 								</table>
@@ -53,7 +51,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-xs-2">
+			<div class="col-xs-1">
 				<div class="panel-group">
 					<div class="panel panel-default">
 						<div class="panel-heading">
@@ -62,17 +60,14 @@
 						<div class="panel-collapse collapse am-collase in">
 							<div class="panel-body">
 								<form class="form-horizontal">
-									<div class="form-group"><button class="btn btn-default center-block" ng-click="processes.addProcess()"> Add Process </button></div>
-									<div class="form-group"><button class="btn btn-default center-block" ng-click="start()"> Start </button></div>
-									<div class="form-group"><button class="btn btn-default center-block" ng-click="toggleDebug()"> Debug Mode: {{debugMode ? "On" : "Off"}} </button></div>
-									<div class="form-group"><button class="btn btn-default center-block" ng-show="debugMode" ng-click="unitTest()"> Randomize </button></div>
+									<div class="form-group"><button class="btn btn-default center-block" ng-click="unitTest()"> Start </button></div>
 								</form>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="col-xs-6">
+			<div class="col-xs-8">
 				<div class="panel-group">
 					<div class="panel panel-default">
 						<div class="panel-heading">

@@ -1,5 +1,5 @@
-Array.prototype.addProcess = function()	{
-	var newProcess = { interArrivalTime: 1, serverTime1: 1, serverTime2: 1};
+Array.prototype.addProcess = function(lambda, u1, u2)	{
+	var newProcess = { interArrivalTime: lambda, serverTime1: u1, serverTime2: u2};
 	this.push(newProcess);
 }
 

@@ -1,7 +1,9 @@
 function Controller($scope){
-	$scope.processes = [{ interArrivalTime: 1, serverTime1: 1, serverTime2: 1}];
+	$scope.processes = [];
 	
 	$scope.debugMode = false;
+	
+	
 	
 	var queuecount = 2;
 	$scope.queuecount  = queuecount;
@@ -17,12 +19,23 @@ function Controller($scope){
 		$scope.debugMode = !$scope.debugMode;
 	}
 	
+	$scope.exponential = function(param){
+		return  -(1/param)*Math.log((1-Math.random()));
+	}
+	
 	$scope.unitTest = function(){
-		$scope.processes.forEach(function(process,index){
-			process.interArrivalTime = Math.floor((Math.random() * 10) + 1);;
-			process.serverTime1 = Math.floor((Math.random() * 10) + 1);;
-			process.serverTime2 = Math.floor((Math.random() * 10) + 1);;
-		});
+		var processNumber = 100;
+		var i = 0;
+		var lambda = $scope.lambda;
+		var u1= $scope.u1;
+		var u2=	$scope.u2;
+		while(i < processNumber){
+			lambda = $scope.exponential(lambda);
+			u1 = $scope.exponential(u1);
+			u2 = $scope.exponential(u2);
+			$scope.processes.addProcess(lambda, u1, u2);
+			i++	
+		}
 		$scope.start();
 	}
 	
